@@ -1,0 +1,16 @@
+{
+  "name": "library",
+  "version": "0.1.0",
+  "dependencies": {
+    "requirejs": "~2.1.9",
+    "requirejs-text": "~2.0.10",
+    "jquery": "~2.0.3",
+    "underscore-amd": "~1.5.2",
+    "backbone-amd": "~1.1.0",
+    "backbone.localStorage": "~1.1.0",
+    "bootstrap": "~3.0.2",
+    "font-awesome": "~4.0.3",
+    "knockback": "~0.17.2",
+    "knockout.js": "~3.0.0"
+  }
+}

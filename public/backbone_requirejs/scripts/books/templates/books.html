@@ -1,0 +1,22 @@
+<div class="page-header">
+    <a href="#books/create" class="btn btn-danger pull-right"><i class="fa fa-plus"></i> Create a new book</a>
+    <h2>Books</h2>
+</div>
+
+<% if (obj.length) { %>
+<ul class="media-list books-list">
+<% _.each(obj, function(book) { %>
+    <li class="media">
+        <a class="pull-left" href="#books/<%= book.id %>">
+            <img class="media-object img-thumbnail" src="<%= book.image %>" alt="<%= book.title %>">
+        </a>
+        <div class="media-body">
+            <h4 class="media-heading"><a href="#books/<%= book.id %>"><%= book.title %></a> <small>by <a href="#authors"><%= book.author %></a></small><span class="badge pull-right"><%= book.pagesCount %> pages</span></h4>
+            <p><%= book.description %></p>
+        </div>
+    </li>
+<% }); %>
+</ul>
+<% } else { %>
+<p class="lead text-center">No books are available yet.</p>
+<% } %>

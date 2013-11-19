@@ -1,0 +1,32 @@
+<html>
+    <body>
+        <div class="api-result"></div>
+        <script>
+            var ajax = function(url, options) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.addEventListener('load', function() {
+                    if (options.success) {
+                        options.success(this.responseText);
+                    }
+                });
+
+                xhr.open(options.type, url, true);
+                xhr.send();
+
+                return xhr;
+            };
+
+            var get = function(url, success) {
+                return ajax(url, {
+                    type: 'GET',
+                    success: success
+                });
+            };
+
+            get('/api/v1/books', function(resp) {
+                document.querySelector('.api-result').innerHTML = ['<h1>GET /api/v1/books</h1>', '', '<pre><code>', resp, '</code></pre>'].join('\n');
+            });
+        </script>
+    </body>
+</html>

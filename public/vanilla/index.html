@@ -1,0 +1,671 @@
+<html>
+<head>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Library</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="/knockback/">Knockback</a>
+                        </li>
+                        <li>
+                            <a href="/backbone_requirejs/">Backbone + RequireJS</a>
+                        </li>
+                        <li>
+                            <a href="/backbone/">Backbone</a>
+                        </li>
+                        <li class="active">
+                            <a href="/vanilla/">Vanilla Javascript</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="main"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted credit">
+                <b>Library</b> using
+                vanilla javascript and <a href="http://getbootstrap.com" target="_blank">Twitter Bootstrap</a>.
+            </p>
+        </div>
+    </footer>
+
+    <script id="booksTemplate" type="text/html">
+        <div class="page-header">
+            <a href="#books/create" class="btn btn-danger pull-right"><i class="fa fa-plus"></i> Create a new book</a>
+            <h2>Books</h2>
+        </div>
+
+        <% if (obj.length) { %>
+        <ul class="media-list books-list">
+        <% obj.forEach(function(book) { %>
+            <li class="media">
+                <a class="pull-left" href="#books/<%= book.id %>">
+                    <img class="media-object img-thumbnail" src="<%= book.image %>" alt="<%= book.title %>">
+                </a>
+                <div class="media-body">
+                    <h4 class="media-heading"><a href="#books/<%= book.id %>"><%= book.title %></a> <small>by <a href="#authors"><%= book.author %></a></small><span class="badge pull-right"><%= book.pagesCount %> pages</span></h4>
+                    <p><%= book.description %></p>
+                </div>
+            </li>
+        <% }); %>
+        </ul>
+        <% } else { %>
+        <p class="lead text-center">No books are available yet.</p>
+        <% } %>
+    </script>
+
+    <script id="bookDetailsTemplate" type="text/html">
+        <div class="page-header">
+            <div class="btn-toolbar pull-right">
+                <button class="btn btn-danger js-delete-book"><span class="fa fa-trash-o"></span> Delete</button>
+                <a href="#books/<%= id %>/edit" class="btn btn-default"><span class="fa fa-edit"></span> Edit</a>
+            </div>
+
+            <div class="btn-toolbar">
+                <a href="#books" class="btn btn-default"><i class="fa fa-chevron-left"></i> Back to list</a>
+            </div>
+        </div>
+
+        <div class="media">
+            <img class="media-object img-thumbnail pull-left img-lrg" src="<%= image %>" alt="<%= title %>">
+            <div class="media-body">
+                <span class="badge pull-right"><%= pagesCount %> pages</span>
+                <h3 class="media-heading"><%= title %></h3>
+                <h4><small>by <a href="#authors"><%= author %></a></small></h4>
+                <p class="lead"><%= description %></p>
+            </div>
+        </div>
+    </script>
+
+    <script id="bookEditTemplate" type="text/html">
+        <div class="page-header">
+            <div class="btn-toolbar pull-right">
+                <button type="submit" class="btn btn-success js-save-book"><span class="fa fa-save"></span> Save</button>
+                <a href="#books<%= (typeof id !== 'undefined') ? '/' + id : '' %>" class="btn btn-default">Cancel</a>
+            </div>
+            <% if (typeof id === 'undefined') { %>
+            <h2>Create a new book</h2>
+            <% } else { %>
+            <h2>Edit book details</h2>
+            <% } %>
+        </div>
+
+        <form class="form-horizontal js-book-form" role="form">
+            <div class="form-group">
+                <label for="title" class="col-sm-3 control-label">Title</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="title" placeholder="Title" name="title" value="<%= title %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="author" class="col-sm-3 control-label">Author</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="author" placeholder="Author" name="author" value="<%= author %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pagesCount" class="col-sm-3 control-label">Pages Count</label>
+                <div class="col-sm-6">
+                    <input type="number" class="form-control" id="pagesCount" placeholder="Pages Count" name="pagesCount" value="<%= pagesCount %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="image" class="col-sm-3 control-label">Image</label>
+                <div class="col-sm-6">
+                    <input type="url" class="form-control" id="image" placeholder="Image" name="image" value="<%= image %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description" class="col-sm-3 control-label">Description</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control" rows="3" id="description" placeholder="Description" name="description"><%= description %></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-6 btn-toolbar">
+                    <button type="submit" class="btn btn-success"><span class="fa fa-save"></span> Save</button>
+                    <a href="#books<%= (typeof id !== 'undefined') ? '/' + id : '' %>" class="btn btn-default">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </script>
+
+    <script id="ajax">
+        var ajax = function(options) {
+            var xhr = new XMLHttpRequest();
+
+            xhr.addEventListener('load', function(resp) {
+                if (options.success) {
+                    options.success(JSON.parse(this.responseText));
+                }
+            });
+
+            xhr.addEventListener('error', function(resp) {
+                if (options.error) {
+                    options.error(JSON.parse(this.responseText));
+                }
+            });
+
+            xhr.open(options.type, options.url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(options.data ? JSON.stringify(options.data) : '');
+
+            return xhr;
+        };
+
+        var _sync = function(method, model, options) {
+            options.type = method;
+            options.url = _result(model, 'url');
+
+            if (method === 'PUT' || method === 'POST') {
+                options.data = model.toJSON();
+            }
+
+            var success = options.success;
+            var error = options.error;
+
+            options.success = function(resp) {
+                success && success(resp);
+                model.trigger('sync', model);
+            };
+
+            options.error = function(resp) {
+                error && error(resp);
+                model.trigger('error', model);
+            };
+
+            model.trigger('request', model);
+
+            return ajax(options);
+        };
+    </script>
+
+    <script id="tmpl">
+        // Simple JavaScript Templating
+        // John Resig - http://ejohn.org/ - MIT Licensed
+        (function(){
+          var cache = {};
+
+          this.tmpl = function tmpl(str, data){
+            // Figure out if we're getting a template, or if we need to
+            // load the template - and be sure to cache the result.
+            var fn = !/\W/.test(str) ?
+              cache[str] = cache[str] ||
+                tmpl(document.getElementById(str).innerHTML) :
+
+              // Generate a reusable function that will serve as a template
+              // generator (and which will be cached).
+              new Function("obj",
+                "var p=[],print=function(){p.push.apply(p,arguments);};" +
+
+                // Introduce the data as local variables using with(){}
+                "with(obj){p.push('" +
+
+                // Convert the template into pure JavaScript
+                str
+                  .replace(/[\r\t\n]/g, " ")
+                  .split("<%").join("\t")
+                  .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+                  .replace(/\t=(.*?)%>/g, "',$1,'")
+                  .split("\t").join("');")
+                  .split("%>").join("p.push('")
+                  .split("\r").join("\\'")
+              + "');}return p.join('');");
+
+            // Provide some basic currying to the user
+            return data ? fn( data ) : fn;
+          };
+        })();
+    </script>
+
+    <script id="extend">
+        var _extend = function(obj) {
+            Array.prototype.slice.call(arguments, 1).forEach(function(source) {
+                if (source) {
+                    for (var prop in source) {
+                        obj[prop] = source[prop];
+                    }
+                }
+            });
+
+            return obj;
+        };
+
+        var _result = function(obj, prop) {
+            return (typeof obj[prop] === 'function') ? obj[prop]() : obj[prop];
+        };
+
+        var extend = function(props) {
+            var parent = this;
+            var child = function() { return parent.apply(this, arguments); };
+
+            var Surrogate = function() { this.constructor = child; };
+            Surrogate.prototype = parent.prototype;
+            child.prototype = new Surrogate();
+
+            _extend(child.prototype, props);
+
+            return child;
+        };
+    </script>
+
+    <script id="events">
+        var Events = {
+            on: function(name, callback, context) {
+                this._events || (this._events = {});
+                var events = this._events[name] || (this._events[name] = []);
+                events.push({ callback: callback, context: context || this });
+            },
+            trigger: function(name) {
+                if (!this._events) { return this; }
+
+                var events = this._events[name];
+                var args = Array.prototype.slice(arguments, 1);
+
+                if (events) {
+                    for (var i = 0, len = events.length; i < len; ++i) {
+                        events[i].callback.apply(events[i].context, args);
+                    }
+                }
+
+                return this;
+            }
+        };
+    </script>
+
+    <script id="model">
+        var Model = function(attrs) {
+            this.attributes = _extend({}, _result(this, 'defaults'), attrs);
+            this.id = this.attributes.id;
+
+            this.initialize.apply(this, arguments);
+        };
+
+        _extend(Model.prototype, Events, {
+
+            initialize: function() {},
+
+            id: null,
+
+            urlRoot: '',
+
+            url: function() {
+                return this.urlRoot + (this.id ? '/' + this.id : '');
+            },
+
+            get: function(attr) {
+                return this.attributes[attr];
+            },
+
+            set: function(attrs) {
+                _extend(this.attributes, attrs);
+                this.trigger('change', this);
+            },
+
+            sync: function() {
+                return _sync.apply(this, arguments);
+            },
+
+            save: function(options) {
+                options || (options = {});
+                var success = options.success;
+
+                options.success = function(attrs) {
+                    this.set(attrs);
+                    success && success(this, attrs);
+                }.bind(this);
+
+                return this.sync(this.id ? 'PUT' : 'POST', this, options);
+            },
+
+            fetch: function(options) {
+                options || (options = {});
+                var success = options.success;
+
+                options.success = function(attrs) {
+                    this.set(attrs);
+                    success && success(this, attrs);
+                }.bind(this);
+
+                return this.sync('GET', this, options);
+            },
+
+            destroy: function(options) {
+                options || (options = {});
+                var success = options.success;
+
+                options.success = function(resp) {
+                    success && success(this, resp);
+                    this.trigger('destroy', this);
+                }.bind(this);
+
+                return this.sync('DELETE', this, options);
+            },
+
+            toJSON: function() {
+                return this.attributes;
+            }
+        });
+
+        Model.extend = extend;
+    </script>
+
+    <script id="collection">
+        var Collection = function() {
+            this.initialize.apply(this, arguments);
+        };
+
+        _extend(Collection.prototype, Events, {
+
+            initialize: function() {},
+
+            model: Model,
+
+            models: [],
+
+            sync: function() {
+                return _sync.apply(this, arguments);
+            },
+
+            fetch: function(options) {
+                options || (options = {});
+                var success = options.success;
+
+                options.success = function(resp) {
+                    this.reset(resp.map(function(attrs) {
+                        return new this.model(attrs);
+                    }.bind(this)));
+
+                    success && success(this, resp);
+                }.bind(this);
+
+                return this.sync('GET', this, options);
+            },
+
+            reset: function(models) {
+                this.models.length = 0;
+
+                if (models) {
+                    for (var i = 0, len = models.length; i < len; i++) {
+                        this.models.push(models[i]);
+                    }
+                }
+
+                this.trigger('reset');
+            },
+
+            toJSON: function() {
+                return this.models.map(function(model) {
+                    return model.toJSON();
+                });
+            }
+        });
+
+        Collection.extend = extend;
+    </script>
+
+    <script id="router">
+        var history = {
+            routes: [],
+
+            route: function(route, callback, context) {
+                this.routes.push({
+                    route: route,
+                    callback: callback,
+                    context: context
+                });
+            },
+
+            onHashChange: function() {
+                var hash = document.location.hash.replace(/^#/, '');
+
+                for (var i = 0; i < this.routes.length; i++) {
+                    var regex = new RegExp('^' + this.routes[i].route + '$');
+                    var matches = regex.exec(hash);
+
+                    if (matches) {
+                        this.routes[i].callback.apply(this.routes[i].context || this, matches.splice(1));
+                        break;
+                    }
+                }
+            },
+
+            navigate: function(url) {
+                document.location.hash = '#' + url.replace(/^#/, '');
+            },
+
+            start: function() {
+                window.addEventListener('hashchange', this.onHashChange.bind(this));
+
+                this.onHashChange();
+            }
+        };
+
+        var Router = function() {
+            if (this.routes) {
+                for (var route in this.routes) {
+                    if (this.routes.hasOwnProperty(route)) {
+                        history.route(route, this[this.routes[route]], this);
+                    }
+                }
+            }
+
+            this.initialize.apply(this, arguments);
+        };
+
+        _extend(Router.prototype, Events, {
+            initialize: function() {}
+        });
+
+        Router.extend = extend;
+    </script>
+
+    <script id="view">
+        var View = function(options) {
+            this.model = options.model;
+            this.collection = options.collection;
+            this.el = document.createElement(this.tagName);
+
+            this.initialize.apply(this, arguments);
+
+            if (this.events) {
+                for (key in this.events) {
+                    var matches = key.match(/^(\S+)\s*(.*)$/);
+
+                    (function(view, eventName, selector, fn) {
+                        view.el.addEventListener(eventName, function(event) {
+                            if (event.target === view.el.querySelector(selector)) {
+                                fn.call(view, event);
+                            }
+                        }.bind(view));
+                    })(this, matches[1], matches[2], this[this.events[key]]);
+                }
+            }
+        };
+
+        _extend(View.prototype, Events, {
+            initialize: function() {},
+
+            $: function(selector) {
+                return this.el.querySelector(selector);
+            },
+
+            tagName: 'div',
+
+            render: function() {
+                return this;
+            }
+        });
+
+        View.extend = extend;
+    </script>
+
+    <script id="app">
+        var BookModel = Model.extend({
+            urlRoot: '/api/v1/books',
+            defaults: {
+                title: '',
+                description: '',
+                author: '',
+                pagesCount: 0,
+                image: ''
+            }
+        });
+
+        var BooksCollection = Collection.extend({
+            url: '/api/v1/books',
+            model: BookModel
+        });
+
+        var BooksView = View.extend({
+
+            template: tmpl('booksTemplate'),
+
+            initialize: function() {
+                this.collection.on('reset', this.render, this);
+            },
+
+            render: function() {
+                this.el.innerHTML = this.template(this.collection.toJSON());
+                return this;
+            }
+        });
+
+        var BookDetailsView = View.extend({
+
+            template: tmpl('bookDetailsTemplate'),
+
+            events: {
+                'click .js-delete-book': 'deleteBook'
+            },
+
+            initialize: function() {
+                this.model.on('change', this.render, this);
+            },
+
+            render: function() {
+                this.el.innerHTML = this.template(this.model.toJSON());
+                return this;
+            },
+
+            deleteBook: function() {
+                this.model.destroy();
+                history.navigate('books');
+            }
+        });
+
+        var BookEditView = View.extend({
+
+            template: tmpl('bookEditTemplate'),
+
+            events: {
+                'submit .js-book-form': 'save',
+                'click .js-save-book': 'save'
+            },
+
+            initialize: function() {
+                this.model.on('change', this.render, this);
+            },
+
+            render: function() {
+                this.el.innerHTML = this.template(this.model.toJSON());
+                return this;
+            },
+
+            save: function(event) {
+                this.model.set({
+                    title: this.$('[name=title]').value,
+                    author: this.$('[name=author]').value,
+                    description: this.$('[name=description]').value,
+                    pagesCount: this.$('[name=pagesCount]').value,
+                    image: this.$('[name=image]').value
+                });
+
+                this.model.save();
+
+                history.navigate('books', true);
+
+                event.preventDefault();
+            }
+        });
+
+        var BooksRouter = Router.extend({
+
+            routes: {
+                '': 'viewAllBooks',
+                'books': 'viewAllBooks',
+                'books/create': 'viewCreateNewBook',
+                'books/([^\/]+)': 'viewBookDetails',
+                'books/([^\/]+)/edit': 'viewEditBookDetails'
+            },
+
+            initialize: function() {
+                this.$main = document.querySelector('.main');
+            },
+
+            viewAllBooks: function() {
+                var collection = new BooksCollection();
+                var view = new BooksView({ collection: collection });
+
+                collection.fetch();
+
+                this.$main.innerHTML = '';
+                this.$main.appendChild(view.render().el);
+            },
+
+            viewCreateNewBook: function() {
+                var view = new BookEditView({
+                    model: new BookModel()
+                });
+
+                this.$main.innerHTML = '';
+                this.$main.appendChild(view.render().el);
+            },
+
+            viewEditBookDetails: function(id) {
+                var model = new BookModel({ id: id });
+                var view = new BookEditView({ model: model });
+
+                model.fetch();
+
+                this.$main.innerHTML = '';
+                this.$main.appendChild(view.render().el);
+            },
+
+            viewBookDetails: function(id) {
+                var model = new BookModel({ id: id });
+                var view = new BookDetailsView({ model: model });
+
+                model.fetch();
+
+                this.$main.innerHTML = '';
+                this.$main.appendChild(view.render().el);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var router = new BooksRouter();
+            history.start();
+        });
+    </script>
+</body>
+</html>
