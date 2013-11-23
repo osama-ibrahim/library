@@ -3,7 +3,7 @@ define(function(require) {
 
     var Backbone = require('backbone');
 
-    // require('localStorage');
+    require('localStorage');
 
     return Backbone.Model.extend({
 
@@ -16,8 +16,8 @@ define(function(require) {
             image: ''
         },
 
-        urlRoot: '/api/v1/books'//,
+        urlRoot: '/api/v1/books',
 
-        // localStorage: new Backbone.LocalStorage('books')
+        localStorage: new Backbone.LocalStorage('books')
     });
 });

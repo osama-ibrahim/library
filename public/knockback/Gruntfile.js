@@ -103,8 +103,16 @@ module.exports = function(grunt) {
                     ]
                 }]
             }
+        },
+        'gh-pages': {
+            options: {
+                base: 'dist'
+            },
+            src: ['**']
         }
     });
+
+    grunt.loadNpmTasks('grunt-gh-pages');
 
     grunt.registerTask('build', [
         'clean:dist',
