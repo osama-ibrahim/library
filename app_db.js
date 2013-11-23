@@ -9,6 +9,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static(__dirname + '/public'));
 
+['knockback', 'knockout', 'backbone_requirejs', 'backbone', 'vanilla'].forEach(function(folder) {
+    app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/dist'));
+    app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/app'));
+});
+
 var BookSchema = new Schema({
     title: String,
     description: String,

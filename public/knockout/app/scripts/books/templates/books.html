@@ -1,0 +1,22 @@
+<div class="page-header">
+    <a href="#books/create" class="btn btn-danger pull-right"><i class="fa fa-plus"></i> Create a new book</a>
+    <h2>Books</h2>
+</div>
+
+<!-- ko if: books().length -->
+<ul class="media-list books-list" data-bind="foreach: books">
+    <li class="media">
+        <a class="pull-left" data-bind="attr: { href: '#books/' + id() }">
+            <img class="media-object img-thumbnail" data-bind="attr: { src: image, alt: title }">
+        </a>
+        <div class="media-body">
+            <h4 class="media-heading"><a data-bind="attr: { href: '#books/' + id() }, text: title"></a> <small>by <a href="#authors" data-bind="text: author"></a></small><span class="badge pull-right" data-bind="text: pagesCount() + ' pages'"></span></h4>
+            <p data-bind="text: description"></p>
+        </div>
+    </li>
+</ul>
+<!-- /ko -->
+
+<!-- ko ifnot: books().length -->
+<p class="lead text-center">No books are available yet.</p>
+<!-- /ko -->

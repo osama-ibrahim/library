@@ -5,6 +5,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static(__dirname + '/public'));
 
+['knockback', 'knockout', 'backbone_requirejs', 'backbone', 'vanilla'].forEach(function(folder) {
+    app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/dist'));
+    app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/app'));
+});
+
 var books = [];
 
 app.get('/api/v1/books', function(req, res) {
