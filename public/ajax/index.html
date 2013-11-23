@@ -2,7 +2,7 @@
     <body>
         <div class="api-result"></div>
         <script>
-            var ajax = function(url, options) {
+            var ajax = function(options) {
                 var xhr = new XMLHttpRequest();
 
                 xhr.addEventListener('load', function() {
@@ -11,15 +11,16 @@
                     }
                 });
 
-                xhr.open(options.type, url, true);
+                xhr.open(options.type, options.url, true);
                 xhr.send();
 
                 return xhr;
             };
 
             var get = function(url, success) {
-                return ajax(url, {
+                return ajax({
                     type: 'GET',
+                    url: url,
                     success: success
                 });
             };
