@@ -10,6 +10,10 @@ app.use(express.static(__dirname + '/public'));
     app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/app'));
 });
 
+app.get('/', function(req, res) {
+    return res.redirect('/knockback');
+});
+
 var books = [];
 
 app.get('/api/v1/books', function(req, res) {

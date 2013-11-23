@@ -14,6 +14,10 @@ app.use(express.static(__dirname + '/public'));
     app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/app'));
 });
 
+app.get('/', function(req, res) {
+    return res.redirect('/knockback');
+});
+
 var BookSchema = new Schema({
     title: String,
     description: String,
