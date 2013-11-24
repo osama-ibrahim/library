@@ -1,9 +1,12 @@
 var express = require('express');
 var app = express();
+var cors = require('cors');
 
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static(__dirname + '/public'));
+app.use(cors());
+app.use(app.router);
 
 ['knockback', 'knockout', 'backbone_requirejs', 'backbone', 'vanilla'].forEach(function(folder) {
     app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/dist'));
