@@ -16,8 +16,8 @@ define(function(require) {
             image: ''
         },
 
-        urlRoot: '/api/v1/books',
+        urlRoot: '/api/v1/books'//,
 
-        localStorage: new Backbone.LocalStorage('books')
+        // localStorage: new Backbone.LocalStorage('books')
     });
 });

@@ -4,18 +4,46 @@ var cors = require('cors');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-mongoose.connect('mongodb://localhost/library');
-
 app.use(express.json());
 app.use(express.urlencoded());
+
 app.use(express.static(__dirname + '/public'));
-app.use(cors());
-app.use(app.router);
 
 ['knockback', 'knockout', 'backbone_requirejs', 'backbone', 'vanilla'].forEach(function(folder) {
     app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/dist'));
     app.use('/' + folder, express.static(__dirname + '/public/' + folder + '/app'));
 });
+
+var corsOptions = {
+    origin: true
+};
+
+app.use(cors(corsOptions));
+
+app.use(app.router);
+
+var mongoSettings = {};
+
+if (process.env.VCAP_SERVICES) {
+    var env = JSON.parse(process.env.VCAP_SERVICES);
+    mongoSettings = env['mongodb-1.8'][0]['credentials'] || {};
+}
+
+var generateMongoUrl = function(obj) {
+    obj.hostname = (obj.hostname || 'localhost');
+    obj.port = (obj.port || 27017);
+    obj.db = (obj.db || 'library');
+
+    if (obj.username && obj.password) {
+        return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
+    } else {
+        return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
+    }
+};
+
+mongoose.connect(generateMongoUrl(mongoSettings));
+
+app.options('*', cors(corsOptions));
 
 app.get('/', function(req, res) {
     return res.redirect('/knockback');
@@ -29,7 +57,7 @@ var BookSchema = new Schema({
     image: String
 });
 
-BookSchema.methods.toBackbone = function () {
+BookSchema.methods.toBackbone = function() {
     var obj = this.toObject();
     obj.id = obj._id;
     delete obj._id;
@@ -49,7 +77,7 @@ app.get('/api/v1/books', function(req, res) {
 
 app.get('/api/v1/books/:id', function(req, res) {
     Book.findById(req.params.id, function(err, book) {
-        res.send(err || !book  ? 404 : book.toBackbone());
+        res.send(err || !book ? 404 : book.toBackbone());
     });
 });
 
@@ -73,5 +101,6 @@ app.del('/api/v1/books/:id', function(req, res) {
     });
 });
 
-app.listen(3000);
-console.log('Listening on port 3000');
+var port = process.env.VCAP_APP_PORT || 3000;
+app.listen(port);
+console.log('Listening on port ' + port);

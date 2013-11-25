@@ -1,0 +1,4 @@
+.DS_STORE
+public/*/node_modules/
+public/knockback/.grunt/
+app/
