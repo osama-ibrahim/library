@@ -3,6 +3,17 @@
         <div class="api-result"></div>
         <script>
             var ajax = function(options) {
+                var defaults = {
+                    type: 'GET',
+                    url: ''
+                };
+
+                for (var param in defaults) {
+                    if (!options[param]) {
+                        options[param] = defaults[param];
+                    }
+                }
+
                 var xhr = new XMLHttpRequest();
 
                 xhr.addEventListener('load', function() {
