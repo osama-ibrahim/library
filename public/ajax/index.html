@@ -23,7 +23,7 @@
                     try {
                         obj = JSON.parse(xhr.responseText);
                     } catch(e) {
-                        return error({
+                        return data.error({
                             message: 'Server Exception'
                         });
                     }
