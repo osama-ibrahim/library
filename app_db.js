@@ -77,7 +77,8 @@ app.get('/api/v1/books', function(req, res) {
 
 app.get('/api/v1/books/:id', function(req, res) {
     Book.findById(req.params.id, function(err, book) {
-        res.send(err || !book ? 404 : book.toBackbone());
+        res.send(!err && book ? 200 : 404, 
+                !err && book ? book.toBackbone() : { message: 'Can\'t find a book with this Id' });
     });
 });
 
@@ -85,13 +86,15 @@ app.post('/api/v1/books', function(req, res) {
     var book = new Book(req.body);
 
     book.save(function(err, savedBook) {
-        res.send(savedBook.toBackbone());
+        res.send(!err && savedBook ? 201 : 400, 
+                !err && savedBook ? savedBook.toBackbone() : { message: 'Invalid request' });
     });
 });
 
 app.put('/api/v1/books/:id', function(req, res) {
     Book.findByIdAndUpdate(req.params.id, req.body, function(err, book) {
-        res.send(err ? 404 : book.toBackbone());
+        res.send(!err && book ? 200 : 404, 
+                !err && book ? book.toBackbone() : { message: 'Can\'t find a book with this Id' });
     });
 });
 
