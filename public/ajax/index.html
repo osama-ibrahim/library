@@ -1,6 +1,7 @@
 <html>
     <body>
-        <div class="api-result"></div>
+        <h1>GET /api/v1/books</h1>
+        <pre class="result"></pre>
         <script>
             var ajax = function(options) {
                 var defaults = {
@@ -55,8 +56,12 @@
                 });
             };
 
-            get('/api/v1/books', function(resp) {
-                document.querySelector('.api-result').innerHTML = ['<h1>GET /api/v1/books</h1>', '', '<pre><code>', resp, '</code></pre>'].join('\n');
+            var resultElement = document.querySelector('.result');
+
+            get('/api/v1/books', function(books) {
+                resultElement.innerHTML = JSON.stringify(books, null, 4);
+            }, function(error) {
+                resultElement.innerHTML = JSON.stringify(error, null, 4);
             });
         </script>
     </body>
