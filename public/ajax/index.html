@@ -23,7 +23,7 @@
                     try {
                         obj = JSON.parse(xhr.responseText);
                     } catch(e) {
-                        return data.error({
+                        return options.error({
                             message: 'Server Exception'
                         });
                     }
@@ -48,11 +48,12 @@
                 return xhr;
             };
 
-            var get = function(url, success) {
+            var get = function(url, success, error) {
                 return ajax({
                     type: 'GET',
                     url: url,
-                    success: success
+                    success: success,
+                    error: error
                 });
             };
 
