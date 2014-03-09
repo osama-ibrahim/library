@@ -36,10 +36,6 @@ define(function(require) {
         observable.collection = ko.observable(collection);
 
         collection.on('reset', function(col) {
-            _.each(observable(), function(obs) {
-                obs.dispose();
-            });
-
             observable(col.map(function(model) {
                 return new kb.ViewModel(model);
             }));

@@ -321,6 +321,7 @@
 
             set: function(attrs) {
                 _extend(this.attributes, attrs);
+                this.id = this.attributes.id;
                 this.trigger('change', this);
             },
 
@@ -330,6 +331,10 @@
 
             parse: function(resp) {
                 return resp;
+            },
+
+            isNew: function() {
+                return !this.id;
             },
 
             save: function(options) {
@@ -638,7 +643,7 @@
             routes: {
                 '': 'viewAllBooks',
                 'books': 'viewAllBooks',
-                'books/create': 'viewCreateNewBook',
+                'books/create': 'viewEditBookDetails',
                 'books/([^\/]+)': 'viewBookDetails',
                 'books/([^\/]+)/edit': 'viewEditBookDetails'
             },
@@ -647,43 +652,67 @@
                 this.$main = document.querySelector('.main');
             },
 
-            viewAllBooks: function() {
-                var collection = new BooksCollection();
-                var view = new BooksView({ collection: collection });
+            _ensureBookModel: function(id) {
+                if (!this.bookModel) {
+                    this.bookModel = new BookModel();
 
-                collection.fetch();
+                    this.bookModel.on('sync', function() {
+                        if (this.booksCollection) {
+                            this.booksCollection.fetch({ reset: true });
+                        }
+                    }.bind(this));
+                }
 
-                this.$main.innerHTML = '';
-                this.$main.appendChild(view.render().el);
+                if (this.bookModel.get('id') !== id) {
+                    this.bookModel.set(this.bookModel.defaults);
+                    this.bookModel.set({ id: id });
+
+                    if (!this.bookModel.isNew()) {
+                        this.bookModel.fetch();
+                    }
+                }
             },
 
-            viewCreateNewBook: function() {
-                var view = new BookEditView({
-                    model: new BookModel()
-                });
+            viewAllBooks: function() {
+                if (!this.booksCollection) {
+                    this.booksCollection = new BooksCollection();
+                    this.booksCollection.fetch({ reset: true });
+                }
+
+                if (!this.booksView) {
+                    this.booksView = new BooksView({
+                        collection: this.booksCollection
+                    });
+                }
 
                 this.$main.innerHTML = '';
-                this.$main.appendChild(view.render().el);
+                this.$main.appendChild(this.booksView.render().el);
             },
 
             viewEditBookDetails: function(id) {
-                var model = new BookModel({ id: id });
-                var view = new BookEditView({ model: model });
+                this._ensureBookModel(id);
 
-                model.fetch();
+                if (!this.bookEditView) {
+                    this.bookEditView = new BookEditView({
+                        model: this.bookModel
+                    });
+                }
 
                 this.$main.innerHTML = '';
-                this.$main.appendChild(view.render().el);
+                this.$main.appendChild(this.bookEditView.render().el);
             },
 
             viewBookDetails: function(id) {
-                var model = new BookModel({ id: id });
-                var view = new BookDetailsView({ model: model });
+                this._ensureBookModel(id);
 
-                model.fetch();
+                if (!this.bookDetailsView) {
+                    this.bookDetailsView = new BookDetailsView({
+                        model: this.bookModel
+                    });
+                }
 
                 this.$main.innerHTML = '';
-                this.$main.appendChild(view.render().el);
+                this.$main.appendChild(this.bookDetailsView.render().el);
             }
         });
 

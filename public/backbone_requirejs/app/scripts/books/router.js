@@ -14,7 +14,7 @@ define(function(require) {
         routes: {
             '': 'viewAllBooks',
             'books': 'viewAllBooks',
-            'books/create': 'viewCreateNewBook',
+            'books/create': 'viewEditBookDetails',
             'books/:id': 'viewBookDetails',
             'books/:id/edit': 'viewEditBookDetails'
         },
@@ -23,38 +23,64 @@ define(function(require) {
             this.$main = $('.main');
         },
 
-        viewAllBooks: function() {
-            var collection = new BooksCollection();
-            var view = new BooksView({
-                collection: collection
-            });
+        _ensureBookModel: function(id) {
+            if (!this.bookModel) {
+                this.bookModel = new BookModel();
 
-            collection.fetch({ reset: true });
+                this.bookModel.on('sync', function() {
+                    if (this.booksCollection) {
+                        this.booksCollection.fetch({ reset: true });
+                    }
+                }.bind(this));
+            }
 
-            this.$main.html(view.render().el);
+            if (this.bookModel.get('id') !== id) {
+                this.bookModel.set(this.bookModel.defaults);
+                this.bookModel.set('id', id);
+
+                if (!this.bookModel.isNew()) {
+                    this.bookModel.fetch();
+                }
+            }
         },
 
-        viewCreateNewBook: function() {
-            var view = new BookEditView({ model: new BookModel() });
-            this.$main.html(view.render().el);
+        viewAllBooks: function() {
+            if (!this.booksCollection) {
+                this.booksCollection = new BooksCollection();
+                this.booksCollection.fetch({ reset: true });
+            }
+
+            if (!this.booksView) {
+                this.booksView = new BooksView({
+                    collection: this.booksCollection
+                });
+            }
+
+            this.$main.html(this.booksView.render().el);
         },
 
         viewEditBookDetails: function(id) {
-            var model = new BookModel({ id: id });
-            var view = new BookEditView({ model: model });
+            this._ensureBookModel(id);
 
-            model.fetch();
+            if (!this.bookEditView) {
+                this.bookEditView = new BookEditView({
+                    model: this.bookModel
+                });
+            }
 
-            this.$main.html(view.render().el);
+            this.$main.html(this.bookEditView.render().el);
         },
 
         viewBookDetails: function(id) {
-            var model = new BookModel({ id: id });
-            var view = new BookDetailsView({ model: model });
+            this._ensureBookModel(id);
 
-            model.fetch();
+            if (!this.bookDetailsView) {
+                this.bookDetailsView = new BookDetailsView({
+                    model: this.bookModel
+                });
+            }
 
-            this.$main.html(view.render().el);
+            this.$main.html(this.bookDetailsView.render().el);
         }
     });
 });
