@@ -6,7 +6,6 @@ require.config({
         jquery: '../bower_components/jquery/jquery',
         underscore: '../bower_components/underscore-amd/underscore',
         backbone: '../bower_components/backbone-amd/backbone',
-        localStorage: '../bower_components/backbone.localStorage/backbone.localStorage',
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap'
     },
     shim: {
@@ -23,6 +22,14 @@ require([
     'backbone',
     'books/router',
 ], function($, Backbone, Router) {
+    (function(oldAjax) {
+        Backbone.ajax = function(options) {
+            options.url = 'https://library-db.firebaseio.com' + options.url + '.json';
+            options.crossDomain = true;
+            oldAjax.apply(this, arguments);
+        };
+    })(Backbone.ajax);
+    
     $(function() {
         new Router();
         Backbone.history.start();

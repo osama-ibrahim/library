@@ -4,14 +4,17 @@ define(function(require) {
     var Backbone = require('backbone'),
         BookModel = require('../models/book');
 
-    require('localStorage');
-
     return Backbone.Collection.extend({
 
         model: BookModel,
 
-        url: '/api/v1/books'//,
+        url: '/books',
 
-        // localStorage: new Backbone.LocalStorage('books')
+        parse: function(resp) {
+            return Object.keys(resp).map(function(key) {
+                resp[key].id = resp[key].id || key;
+                return resp[key];
+            });
+        }
     });
 });

@@ -328,13 +328,17 @@
                 return _sync.apply(this, arguments);
             },
 
+            parse: function(resp) {
+                return resp;
+            },
+
             save: function(options) {
                 options || (options = {});
                 var success = options.success;
 
-                options.success = function(attrs) {
-                    this.set(attrs);
-                    success && success(this, attrs);
+                options.success = function(resp) {
+                    this.set(this.parse(resp, options), options);
+                    success && success(this, resp, options);
                 }.bind(this);
 
                 return this.sync(this.id ? 'PUT' : 'POST', this, options);
@@ -389,12 +393,16 @@
                 return _sync.apply(this, arguments);
             },
 
+            parse: function(resp) {
+                return resp;
+            },
+
             fetch: function(options) {
                 options || (options = {});
                 var success = options.success;
 
                 options.success = function(resp) {
-                    this.reset(resp.map(function(attrs) {
+                    this.reset(this.parse(resp, options).map(function(attrs) {
                         return new this.model(attrs);
                     }.bind(this)));
 
@@ -523,8 +531,16 @@
     </script>
 
     <script id="app">
+        (function(oldAjax) {
+            ajax = function(options) {
+                options.url = 'https://library-db.firebaseio.com' + options.url + '.json';
+                options.crossDomain = true;
+                oldAjax.apply(this, arguments);
+            };
+        })(ajax);
+
         var BookModel = Model.extend({
-            urlRoot: '/api/v1/books',
+            urlRoot: '/books',
             defaults: {
                 title: '',
                 description: '',
@@ -535,8 +551,14 @@
         });
 
         var BooksCollection = Collection.extend({
-            url: '/api/v1/books',
-            model: BookModel
+            url: '/books',
+            model: BookModel,
+            parse: function(resp) {
+                return Object.keys(resp).map(function(key) {
+                    resp[key].id = resp[key].id || key;
+                    return resp[key];
+                });
+            }
         });
 
         var BooksView = View.extend({
