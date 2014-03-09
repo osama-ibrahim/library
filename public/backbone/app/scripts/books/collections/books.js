@@ -1,13 +1,17 @@
-window.BooksCollection = Backbone.Collection.extend({
+(function(Backbone, BookModel) {
+    'use strict';
 
-    model: BookModel,
+    window.BooksCollection = Backbone.Collection.extend({
 
-    url: '/books',
+        model: BookModel,
 
-    parse: function(resp) {
-        return Object.keys(resp).map(function(key) {
-            resp[key].id = resp[key].id || key;
-            return resp[key];
-        });
-    }
-});
+        url: '/books',
+
+        parse: function(resp) {
+            return Object.keys(resp).map(function(key) {
+                resp[key].id = resp[key].id || key;
+                return resp[key];
+            });
+        }
+    });
+})(window.Backbone, window.BookModel);

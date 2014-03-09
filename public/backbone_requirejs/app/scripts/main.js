@@ -29,7 +29,7 @@ require([
             oldAjax.apply(this, arguments);
         };
     })(Backbone.ajax);
-    
+
     $(function() {
         new Router();
         Backbone.history.start();

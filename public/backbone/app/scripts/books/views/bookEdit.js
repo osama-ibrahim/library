@@ -1,34 +1,38 @@
-window.BookEditView = Backbone.View.extend({
+(function($, _, Backbone) {
+    'use strict';
 
-    template: _.template($('#bookEditTemplate').html()),
+    window.BookEditView = Backbone.View.extend({
 
-    events: {
-        'submit .js-book-form': 'save',
-        'click .js-save-book': 'save'
-    },
+        template: _.template($('#bookEditTemplate').html()),
 
-    initialize: function() {
-        this.listenTo(this.model, 'change', this.render);
-    },
+        events: {
+            'submit .js-book-form': 'save',
+            'click .js-save-book': 'save'
+        },
 
-    render: function() {
-        this.$el.html(this.template(this.model.toJSON()));
-        return this;
-    },
+        initialize: function() {
+            this.listenTo(this.model, 'change', this.render);
+        },
 
-    save: function() {
-        this.model.set({
-            title: this.$('[name=title]').val(),
-            author: this.$('[name=author]').val(),
-            description: this.$('[name=description]').val(),
-            pagesCount: this.$('[name=pagesCount]').val(),
-            image: this.$('[name=image]').val()
-        });
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        },
 
-        this.model.save();
+        save: function() {
+            this.model.set({
+                title: this.$('[name=title]').val(),
+                author: this.$('[name=author]').val(),
+                description: this.$('[name=description]').val(),
+                pagesCount: this.$('[name=pagesCount]').val(),
+                image: this.$('[name=image]').val()
+            });
 
-        Backbone.history.navigate('books', true);
+            this.model.save();
 
-        return false;
-    }
-});
+            Backbone.history.navigate('books', true);
+
+            return false;
+        }
+    });
+})(window.jQuery, window._, window.Backbone);

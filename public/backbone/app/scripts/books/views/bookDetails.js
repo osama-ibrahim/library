@@ -1,22 +1,26 @@
-window.BookDetailsView = Backbone.View.extend({
+(function($, _, Backbone) {
+    'use strict';
 
-    template: _.template($('#bookDetailsTemplate').html()),
+    window.BookDetailsView = Backbone.View.extend({
 
-    events: {
-        'click .js-delete-book': 'deleteBook'
-    },
+        template: _.template($('#bookDetailsTemplate').html()),
 
-    initialize: function() {
-        this.listenTo(this.model, 'change', this.render);
-    },
+        events: {
+            'click .js-delete-book': 'deleteBook'
+        },
 
-    render: function() {
-        this.$el.html(this.template(this.model.toJSON()));
-        return this;
-    },
+        initialize: function() {
+            this.listenTo(this.model, 'change', this.render);
+        },
 
-    deleteBook: function() {
-        this.model.destroy();
-        Backbone.history.navigate('books', true);
-    }
-});
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        },
+
+        deleteBook: function() {
+            this.model.destroy();
+            Backbone.history.navigate('books', true);
+        }
+    });
+})(window.jQuery, window._, window.Backbone);

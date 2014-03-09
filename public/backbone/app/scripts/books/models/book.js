@@ -1,12 +1,16 @@
-window.BookModel = Backbone.Model.extend({
+(function(Backbone) {
+    'use strict';
 
-    defaults: {
-        title: '',
-        description: '',
-        author: '',
-        pagesCount: 0,
-        image: ''
-    },
+    window.BookModel = Backbone.Model.extend({
 
-    urlRoot: '/books'
-});
+        defaults: {
+            title: '',
+            description: '',
+            author: '',
+            pagesCount: 0,
+            image: ''
+        },
+
+        urlRoot: '/books'
+    });
+})(window.Backbone);

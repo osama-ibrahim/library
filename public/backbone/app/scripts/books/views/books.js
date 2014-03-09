@@ -1,13 +1,17 @@
-window.BooksView = Backbone.View.extend({
+(function($, _, Backbone) {
+    'use strict';
 
-    template: _.template($('#booksTemplate').html()),
+    window.BooksView = Backbone.View.extend({
 
-    initialize: function() {
-        this.listenTo(this.collection, 'reset', this.render);
-    },
+        template: _.template($('#booksTemplate').html()),
 
-    render: function() {
-        this.$el.html(this.template(this.collection.toJSON()));
-        return this;
-    }
-});
+        initialize: function() {
+            this.listenTo(this.collection, 'reset', this.render);
+        },
+
+        render: function() {
+            this.$el.html(this.template(this.collection.toJSON()));
+            return this;
+        }
+    });
+})(window.jQuery, window._, window.Backbone);

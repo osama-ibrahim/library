@@ -1,55 +1,59 @@
-window.Router = Backbone.Router.extend({
+(function($, Backbone, BooksCollection, BookModel, BooksView, BookDetailsView, BookEditView) {
+    'use strict';
 
-    routes: {
-        '': 'viewAllBooks',
-        'books': 'viewAllBooks',
-        'books/create': 'viewCreateNewBook',
-        'books/:id': 'viewBookDetails',
-        'books/:id/edit': 'viewEditBookDetails'
-    },
+    window.Router = Backbone.Router.extend({
 
-    initialize: function() {
-        this.$main = $('.main');
-    },
+        routes: {
+            '': 'viewAllBooks',
+            'books': 'viewAllBooks',
+            'books/create': 'viewCreateNewBook',
+            'books/:id': 'viewBookDetails',
+            'books/:id/edit': 'viewEditBookDetails'
+        },
 
-    viewAllBooks: function() {
-        var collection = new BooksCollection();
-        collection.fetch({ reset: true });
+        initialize: function() {
+            this.$main = $('.main');
+        },
 
-        var view = new BooksView({
-            collection: collection
-        });
+        viewAllBooks: function() {
+            var collection = new BooksCollection();
+            collection.fetch({ reset: true });
 
-        this.$main.html(view.render().el);
-    },
+            var view = new BooksView({
+                collection: collection
+            });
 
-    viewCreateNewBook: function() {
-        var view = new BookEditView({
-            model: new BookModel()
-        });
+            this.$main.html(view.render().el);
+        },
 
-        this.$main.html(view.render().el);
-    },
+        viewCreateNewBook: function() {
+            var view = new BookEditView({
+                model: new BookModel()
+            });
 
-    viewEditBookDetails: function(id) {
-        var model = new BookModel({ id: id });
-        model.fetch();
+            this.$main.html(view.render().el);
+        },
 
-        var view = new BookEditView({
-            model: model
-        });
+        viewEditBookDetails: function(id) {
+            var model = new BookModel({ id: id });
+            model.fetch();
 
-        this.$main.html(view.render().el);
-    },
+            var view = new BookEditView({
+                model: model
+            });
 
-    viewBookDetails: function(id) {
-        var model = new BookModel({ id: id });
-        model.fetch();
+            this.$main.html(view.render().el);
+        },
 
-        var view = new BookDetailsView({
-            model: model
-        });
+        viewBookDetails: function(id) {
+            var model = new BookModel({ id: id });
+            model.fetch();
 
-        this.$main.html(view.render().el);
-    }
-});
+            var view = new BookDetailsView({
+                model: model
+            });
+
+            this.$main.html(view.render().el);
+        }
+    });
+})(window.jQuery, window.Backbone, window.BooksCollection, window.BookModel, window.BooksView, window.BookDetailsView, window.BookEditView);
