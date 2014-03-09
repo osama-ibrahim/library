@@ -20,7 +20,7 @@ require(['bootstrap']);
 require([
     'jquery',
     'backbone',
-    'books/router',
+    'books/router'
 ], function($, Backbone, Router) {
     (function(oldAjax) {
         Backbone.ajax = function(options) {
