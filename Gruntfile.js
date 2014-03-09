@@ -15,7 +15,8 @@ module.exports = function(grunt) {
         },
         clean: [
             'npm-shrinkwrap.json',
-            'dist'
+            'dist',
+            'public/*/dist'
         ],
         copy: {
             main: {
