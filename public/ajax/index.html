@@ -1,69 +1,107 @@
 <html>
-    <body>
-        <h1>GET /api/v1/books</h1>
-        <pre class="result"></pre>
-        <script>
-            var ajax = function(options) {
-                var defaults = {
-                    type: 'GET',
-                    url: ''
-                };
+    <link rel="stylesheet" href="/css/main.css">
 
-                for (var param in defaults) {
-                    if (!options[param]) {
-                        options[param] = defaults[param];
-                    }
+    <h1>GET Book Details (/books/:id)</h1>
+
+    <blockquote>
+        Click <a href="https://library-db.firebaseio.com/books.json" target="_blank">here</a> to see a list of books and get the id from.
+    </blockquote>
+
+    <form class="flex">
+        <input type="text" class="js-book-id flex-1" placeholder="Type the book Id here" />
+        <button class="js-get-book">Get Book</button>
+    </form>
+
+    <pre class="js-result"></pre>
+
+    <script>
+        var ajax = function(options) {
+            var defaults = {
+                type: 'GET',
+                url: '',
+                success: function() {},
+                error: function() {}
+            };
+
+            // This is how we can handle optional params with default value:
+            // for each param in the defaults object, check and see if it
+            // doesn't exist in the options object, copy it from the defaults
+            // object to the options object.
+            for (var param in defaults) {
+                if (!options[param]) {
+                    options[param] = defaults[param];
+                }
+            }
+
+            // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+
+            // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.addEventListener
+            xhr.addEventListener('load', function() {
+                var obj;
+
+                try {
+                    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+                    obj = JSON.parse(xhr.responseText);
+                } catch(e) {
+                    return options.error({
+                        message: 'The returned data is not in the JSON format'
+                    });
                 }
 
-                var xhr = new XMLHttpRequest();
-
-                xhr.addEventListener('load', function() {
-                    var obj;
-
-                    try {
-                        obj = JSON.parse(xhr.responseText);
-                    } catch(e) {
-                        return options.error({
-                            message: 'Server Exception'
-                        });
-                    }
-
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        if (typeof options.success === 'function') {
-                            options.success(obj);
-                        }
-                    } else if (xhr.status >= 400) {
-                        if (typeof options.error === 'function') {
-                            options.error(obj);
-                        }
-                    }
-                });
-
-                xhr.open(options.type, options.url, true);
-
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                
-                xhr.send(options.data && JSON.stringify(options.data));
-
-                return xhr;
-            };
-
-            var get = function(url, success, error) {
-                return ajax({
-                    type: 'GET',
-                    url: url,
-                    success: success,
-                    error: error
-                });
-            };
-
-            var resultElement = document.querySelector('.result');
-
-            get('/api/v1/books', function(books) {
-                resultElement.innerHTML = JSON.stringify(books, null, 4);
-            }, function(error) {
-                resultElement.innerHTML = JSON.stringify(error, null, 4);
+                // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    options.success(obj);
+                } else if (xhr.status >= 400) {
+                    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4
+                    options.error(obj);
+                }
             });
-        </script>
-    </body>
+
+            xhr.addEventListener('error', function() {
+                options.error({
+                    message: 'An error has occured'
+                });
+            });
+
+            xhr.open(options.type, options.url, true);
+
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+            xhr.send(options.data && JSON.stringify(options.data));
+
+            return xhr;
+        };
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/document.querySelector
+        var resultEl = document.querySelector('.js-result');
+        var bookIdEl = document.querySelector('.js-book-id');
+        var getBookEl = document.querySelector('.js-get-book')
+
+        getBookEl.addEventListener('click', function(event) {
+            // Firebase RESTful APIs requires ".json" to be appended at the end
+            // of the url, here you can see their docs about their RESTful API:
+            // https://www.firebase.com/docs/rest-api.html
+            var url = 'https://library-db.firebaseio.com/books/' + bookIdEl.value + '.json';
+
+            ajax({
+                url: url,
+                success: function(books) {
+                    resultEl.textContent = JSON.stringify(books, null, 4);
+                },
+                error: function(error) {
+                    resultEl.textContent = JSON.stringify(error, null, 4);
+                }
+            });
+
+            // Prevent the default browser action when submitting a form.
+            // See the following reference on how to use html forms to
+            // get/send data without javascript, we don't want the default
+            // behaviour to happen, since we are doing the AJAX requests
+            // ourselves through javascript:
+            // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms/My_first_HTML_form
+            event.preventDefault();
+        });
+    </script>
 </html>
