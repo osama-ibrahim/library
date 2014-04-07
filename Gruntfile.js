@@ -61,6 +61,12 @@ module.exports = function(grunt) {
                     src: '**',
                     dest: 'dist/public/vanilla',
                     filter: 'isFile'
+                }, {
+                    expand: true,
+                    cwd: 'public/jquery',
+                    src: '**',
+                    dest: 'dist/public/jquery',
+                    filter: 'isFile'
                 }]
             }
         }
