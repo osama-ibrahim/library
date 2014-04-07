@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <div class="js-create-new-book-container hidden">
+            <h1>Create New Book</h1>
+            <form class="js-save-book-form">
+                <input type="text" name="title" autocomplete="no" placeholder="Title">
+                <input type="text" name="author" placeholder="Author">
+                <input type="number" name="pagesCount" placeholder="Pages Count">
+                <input type="text" name="image" placeholder="Image">
+                <textarea name="description" placeholder="Description"></textarea>
+                <input type="submit" value="Save">
+                <input type="button" value="Cancel" class="js-view-books-list">
+            </form>
+        </div>
+
+        <div class="js-books-list-container">
+            <h1>Books <button class="js-create-new-book">Create a new book</button></h1>
+            <ul class="js-books-list">
+                <!-- Placeholder for rendering list of book -->
+            </ul>
+        </div>
+
+        <div class="js-book-details-container hidden">
+            <h1><button class="js-view-books-list">Back</button> Book Details</h1>
+            <div class="js-book-details">
+                <!-- Placeholder for rendering book details -->
+            </div>
+        </div>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>
